@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite'
 
 export default defineConfig({
-  base: './',
+  base: '/number_learning/',
   build: {
     target: ['es2017']
   }
