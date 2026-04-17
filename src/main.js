@@ -867,20 +867,6 @@ function renderHome() {
           <button class="primary-btn" data-nav="/quiz">${copy.startQuiz}</button>
           <button class="accent-btn" data-nav="/build/1">${copy.goBuild}</button>
         </div>
-        <div class="hero__stats">
-          <div class="hero__stat">
-            <strong>${numberCards.length}</strong>
-            <span>${copy.homeStatImages}</span>
-          </div>
-          <div class="hero__stat">
-            <strong>2</strong>
-            <span>${copy.homeStatLanguages}</span>
-          </div>
-          <div class="hero__stat">
-            <strong>2</strong>
-            <span>${copy.homeStatEffects}</span>
-          </div>
-        </div>
       </section>
 
       <section class="section-head">
@@ -913,7 +899,6 @@ function renderHotspots(card) {
     .map((hotspot) => {
       const typeClass = hotspot.type === 'horn' ? ' hotspot--horn' : ''
       const editableClass = allowHotspotEditing && state.editMode ? ' hotspot--editable' : ''
-      const icon = hotspot.type === 'horn' ? '🚗' : '🔊'
       const width = hotspot.width ? `width:${hotspot.width}px;` : ''
       const height = hotspot.height ? `height:${hotspot.height}px;` : ''
       return `
@@ -924,10 +909,8 @@ function renderHotspots(card) {
           data-hotspot-type="${hotspot.type}"
           data-card-value="${card.value}"
           title="${getHotspotLabel(hotspot.type)}"
-        >
-          <span class="hotspot__icon">${icon}</span>
-          <span class="hotspot__text">${getHotspotLabel(hotspot.type)}</span>
-        </button>
+          aria-label="${getHotspotLabel(hotspot.type)}"
+        ></button>
       `
     })
     .join('')

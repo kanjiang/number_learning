@@ -347,31 +347,36 @@ img {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
-    padding: 0 12px;
+    padding: 0;
     transform: translate(-50%, -50%);
-    min-width: 92px;
+    min-width: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+}
+
+.hotspot::before {
+    content: '';
+    width: 16px;
+    height: 16px;
     border-radius: 999px;
-    border: 2px solid rgba(255, 255, 255, 0.75);
-    background: rgba(255, 146, 43, 0.92);
-    color: #fff;
-    box-shadow: 0 10px 24px rgba(245, 146, 35, 0.28);
-    font-weight: 700;
-    line-height: 1;
+    border: 2px solid rgba(255, 255, 255, 0.92);
+    background: rgba(255, 146, 43, 0.96);
+    box-shadow: 0 8px 18px rgba(245, 146, 35, 0.24);
 }
 
-.hotspot--horn {
-    background: rgba(84, 158, 255, 0.92);
-    box-shadow: 0 10px 24px rgba(84, 158, 255, 0.24);
+.hotspot--horn::before {
+    background: rgba(84, 158, 255, 0.96);
+    box-shadow: 0 8px 18px rgba(84, 158, 255, 0.22);
 }
 
-.hotspot__icon {
-    font-size: 14px;
+.hotspot:hover::before,
+.hotspot:focus-visible::before {
+    transform: scale(1.08);
 }
 
-.hotspot__text {
-    font-size: 13px;
-    white-space: nowrap;
+.hotspot::before {
+    transition: transform 0.18s ease;
 }
 
 .learn-legend {
@@ -723,6 +728,7 @@ img {
     .topbar {
         flex-direction: column;
         align-items: flex-start;
+        padding: 14px 16px;
     }
 
     .topbar__nav {
@@ -743,6 +749,36 @@ img {
 
     .builder-layout {
         grid-template-columns: 1fr;
+    }
+
+    .page-shell {
+        padding: 20px 14px 40px;
+    }
+
+    .hero,
+    .learn-banner,
+    .about-hero,
+    .quiz-head,
+    .result,
+    .guide,
+    .learn-image,
+    .learn-side,
+    .question,
+    .quiz-tip,
+    .about-summary,
+    .about-section,
+    .release,
+    .mnemonic-card,
+    .video-section,
+    .builder-board,
+    .builder-side,
+    .builder-controls {
+        padding: 18px;
+    }
+
+    .hotspot::before {
+        width: 14px;
+        height: 14px;
     }
 
     .topbar__nav button,
