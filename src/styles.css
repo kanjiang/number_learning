@@ -291,6 +291,13 @@ img {
     overflow: hidden;
 }
 
+.number-card--compact {
+    align-items: center;
+    justify-content: center;
+    min-height: 132px;
+    text-align: center;
+}
+
 .number-card:hover,
 .option-card:hover,
 .soft-btn:hover,
@@ -305,6 +312,10 @@ img {
     font-size: 40px;
     font-weight: 800;
     color: #d67b00;
+}
+
+.number-card--compact .number-card__value {
+    font-size: 56px;
 }
 
 .number-card__image {

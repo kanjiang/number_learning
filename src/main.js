@@ -4,6 +4,10 @@ import { appMeta, blockPatterns, effectAudio, learningVideos, numberCards, relea
 const app = document.querySelector('#app')
 const speechAudio = new Audio()
 const fxAudio = new Audio()
+let pendingAutoSpeechTimer = null
+
+speechAudio.preload = 'auto'
+fxAudio.preload = 'auto'
 
 const storageKeys = {
   language: 'numberWebLanguage',
@@ -89,6 +93,7 @@ const messages = {
   zh: {
     appName: appMeta.appName,
     navHome: '首页',
+    navVideos: '看动画',
     navBuild: '积木',
     navQuiz: '闯关',
     navAbout: '关于',
@@ -227,6 +232,7 @@ const messages = {
   en: {
     appName: 'Number Explorer',
     navHome: 'Home',
+    navVideos: 'Videos',
     navBuild: 'Blocks',
     navQuiz: 'Quiz',
     navAbout: 'About',
@@ -404,7 +410,7 @@ function playEffect(src) {
   fxAudio.play().catch(() => {})
 }
 
-function playAudioSource(src, type, errorTitle) {
+function playAudioSource(src, type, errorTitle, showErrorModal = true) {
   if (!src) {
     return
   }
@@ -417,19 +423,24 @@ function playAudioSource(src, type, errorTitle) {
   speechAudio.pause()
   speechAudio.currentTime = 0
   speechAudio.src = src
+  speechAudio.load()
   state.playingType = type
   speechAudio.play().catch(() => {
     state.playingType = ''
-    showModal(getCopy().audioUnavailable, errorTitle)
+    if (showErrorModal) {
+      showModal(getCopy().audioUnavailable, errorTitle)
+      return
+    }
+    render()
   })
   render()
 }
 
-function playSpeech(card, language) {
+function playSpeech(card, language, options = {}) {
   const targetLanguage = language || state.selectedLanguage
   const src = targetLanguage === 'en' ? card.audioEn : card.audioZh
   persistLanguage(targetLanguage)
-  playAudioSource(src, targetLanguage, getCopy().speechError)
+  playAudioSource(src, targetLanguage, getCopy().speechError, options.showErrorModal ?? true)
 }
 
 function playMnemonic(card) {
@@ -447,7 +458,13 @@ function playSelectedValueAudio(value) {
   if (!card) {
     return
   }
-  playSpeech(card, state.selectedLanguage)
+  if (pendingAutoSpeechTimer) {
+    window.clearTimeout(pendingAutoSpeechTimer)
+  }
+  pendingAutoSpeechTimer = window.setTimeout(() => {
+    playSpeech(card, state.selectedLanguage, { showErrorModal: false })
+    pendingAutoSpeechTimer = null
+  }, 180)
 }
 
 function playHorn() {
@@ -831,7 +848,7 @@ function useHint() {
 }
 
 function getNavPage() {
-  if (state.route.page === 'learn' || state.route.page === 'videos') {
+  if (state.route.page === 'learn') {
     return 'home'
   }
   return state.route.page
@@ -846,6 +863,7 @@ function renderNav() {
       <div class="topbar__brand">${copy.appName} Web</div>
       <nav class="topbar__nav">
         <button class="${navPage === 'home' ? 'chip chip--active' : 'chip'}" data-nav="/">${copy.navHome}</button>
+        <button class="${navPage === 'videos' ? 'chip chip--active' : 'chip'}" data-nav="/videos/1">${copy.navVideos}</button>
         <button class="${navPage === 'build' ? 'chip chip--active' : 'chip'}" data-nav="/build/${state.route.id || 1}">${copy.navBuild}</button>
         <button class="${navPage === 'quiz' ? 'chip chip--active' : 'chip'}" data-nav="/quiz">${copy.navQuiz}</button>
         <button class="${navPage === 'about' ? 'chip chip--active' : 'chip'}" data-nav="/about">${copy.navAbout}</button>
@@ -876,18 +894,11 @@ function renderHome() {
 
       <section class="cards-grid">
         ${numberCards
-          .map((card) => {
-            const content = getCardContent(card)
-            return `
-              <button class="panel number-card" data-nav="/learn/${card.value}">
-                <img class="number-card__image" src="${card.image}" alt="${content.label}" />
-                <span class="number-card__value">${card.value}</span>
-                <span class="number-card__label">${content.label}</span>
-                <span>${content.tip}</span>
-                <span class="number-card__meta">${copy.startLearning}</span>
-              </button>
-            `
-          })
+          .map((card) => `
+            <button class="panel number-card number-card--compact" data-nav="/learn/${card.value}" aria-label="${copy.startLearning} ${card.value}">
+              <span class="number-card__value">${card.value}</span>
+            </button>
+          `)
           .join('')}
       </section>
     </main>
@@ -1308,7 +1319,7 @@ function renderModal() {
 
   return `
     <div class="modal-mask" data-action="close-modal">
-      <div class="panel modal" onclick="event.stopPropagation()">
+      <div class="panel modal" data-modal-panel="true">
         <h3>${state.modal.title}</h3>
         ${body}
         <div class="hero__actions">
@@ -1350,6 +1361,10 @@ function render() {
 app.addEventListener('click', (event) => {
   if (event.target.matches('.modal-mask')) {
     closeModal()
+    return
+  }
+
+  if (state.modal && event.target.closest('[data-modal-panel="true"]') && !event.target.closest('[data-action="close-modal"]')) {
     return
   }
 
