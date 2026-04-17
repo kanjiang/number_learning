@@ -1,8 +1,9 @@
-import { defineConfig } from 'vite'
-
 export default defineConfig({
-  base: '/number_learning/',
+  base: process.env.NODE_ENV === 'production'
+    ? '/number_learning/'
+    : '/',
   build: {
-    target: ['es2017']
-  }
+    target: ['es2017'],
+  },
 })
+``
