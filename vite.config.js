@@ -1,9 +1,11 @@
+import { defineConfig } from 'vite';
+
 export default defineConfig({
-  base: process.env.NODE_ENV === 'production'
-    ? '/number_learning/'
-    : '/',
+  base: process.env.VERCEL
+    ? '/'                 // ✅ Vercel
+    : '/number_learning/',// ✅ GitHub Pages
   build: {
     target: ['es2017'],
   },
-})
+});
 ``
