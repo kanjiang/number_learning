@@ -131,8 +131,6 @@ const messages = {
     hotspotSpeech: '数字口诀',
     hotspotHorn: '汽车鸣笛',
     hotspotHint: '橙色热点会播放数字口诀，蓝色小汽车热点会播放鸣笛声音。',
-    hotspotLegendSpeech: '点橙色数字热点，播放数字口诀',
-    hotspotLegendHorn: '点蓝色汽车热点，播放汽车鸣笛',
     mnemonicBadge: '数字口诀',
     mnemonicHint: '点击图片里的数字也会直接播放这句口诀。',
     playMnemonic: '播放数字口诀',
@@ -270,8 +268,6 @@ const messages = {
     hotspotSpeech: 'Mnemonic',
     hotspotHorn: 'Horn',
     hotspotHint: 'Orange hotspots play the number mnemonic. Blue car hotspots play the horn sound.',
-    hotspotLegendSpeech: 'Tap the orange number hotspot to play the mnemonic',
-    hotspotLegendHorn: 'Tap the blue car hotspot to play the horn sound',
     mnemonicBadge: 'Number Mnemonic',
     mnemonicHint: 'Tapping the number inside the picture will also play this mnemonic.',
     playMnemonic: 'Play Mnemonic',
@@ -953,17 +949,6 @@ function renderLearn() {
             <div class="web-image-wrap ${allowHotspotEditing && state.editMode ? 'web-image-wrap--editing' : ''}">
               <img src="${card.image}" alt="${content.label}" />
               ${renderHotspots(card)}
-            </div>
-
-            <div class="panel learn-legend">
-              <div class="learn-legend__item">
-                <span class="learn-legend__dot learn-legend__dot--sound"></span>
-                <span>${copy.hotspotLegendSpeech}</span>
-              </div>
-              <div class="learn-legend__item">
-                <span class="learn-legend__dot learn-legend__dot--horn"></span>
-                <span>${copy.hotspotLegendHorn}</span>
-              </div>
             </div>
           </section>
 

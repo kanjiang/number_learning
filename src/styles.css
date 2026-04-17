@@ -390,13 +390,6 @@ img {
     transition: transform 0.18s ease;
 }
 
-.learn-legend {
-    display: grid;
-    gap: 12px;
-    margin-top: 16px;
-    padding: 16px 18px;
-}
-
 .mnemonic-card,
 .video-section,
 .builder-board,
@@ -590,28 +583,6 @@ img {
 .soft-btn--active {
     background: rgba(244, 166, 33, 0.18);
     color: #8a4d00;
-}
-
-.learn-legend__item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: #7a5d3b;
-}
-
-.learn-legend__dot {
-    width: 14px;
-    height: 14px;
-    border-radius: 999px;
-    flex: 0 0 auto;
-}
-
-.learn-legend__dot--sound {
-    background: rgba(255, 146, 43, 0.92);
-}
-
-.learn-legend__dot--horn {
-    background: rgba(84, 158, 255, 0.92);
 }
 
 .hint-text,
