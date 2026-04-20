@@ -185,21 +185,21 @@ const messages = {
     quizScore: (score, total) => `得分 ${score} / ${total}`,
     quizStreak: (value) => `连续答对 ${value} 题`,
     quizQuestion: (value) => `第 ${value} 题`,
-    quizDesc: '看图片，选出正确的数字。',
+    quizDesc: '听题后，选出正确的数字。',
     listenChinese: '中文听题',
     hintsLeft: '剩余提示',
     currentStreak: '当前连对',
     bestStreak: '最佳连对',
     quizGuideTitle: '答题提示',
-    quizGuideText: '先听题目音频，再看图片，最后从下面选项里找出正确数字。',
+    quizGuideText: '先听题目音频，再从下面选项里找出正确数字。',
     useHint: (count) => `使用提示道具（剩余 ${count} 次）`,
-    questionPrompt: '这张图里对应的是哪个数字？',
+    questionPrompt: '这个题目的正确数字是哪个？',
     playQuestion: '播放题目音频',
     stopQuestion: '停止题目音频',
     correct: '答对了',
     wrong: '这题答错了',
-    correctFeedback: (value, streak) => `真棒，这张图片对应的是 ${value}。当前连续答对 ${streak} 题。`,
-    wrongFeedback: (value) => `正确答案是 ${value}，再看一眼图片会更容易记住。`,
+    correctFeedback: (value, streak) => `真棒，正确数字是 ${value}。当前连续答对 ${streak} 题。`,
+    wrongFeedback: (value) => `正确答案是 ${value}，再听一遍题目会更容易记住。`,
     nextQuestion: '下一题',
     viewResult: '查看成绩',
     resultScore: (score, total) => `本次得分 ${score} / ${total}`,
@@ -323,21 +323,21 @@ const messages = {
     quizScore: (score, total) => `Score ${score} / ${total}`,
     quizStreak: (value) => `Correct in a row: ${value}`,
     quizQuestion: (value) => `Question ${value}`,
-    quizDesc: 'Look at the picture and choose the correct number.',
+    quizDesc: 'Listen to the prompt and choose the correct number.',
     listenChinese: 'Chinese Prompt',
     hintsLeft: 'Hints Left',
     currentStreak: 'Current Streak',
     bestStreak: 'Best Streak',
     quizGuideTitle: 'Quiz Tip',
-    quizGuideText: 'Listen to the prompt, look at the picture, and choose the correct number below.',
+    quizGuideText: 'Listen to the prompt and choose the correct number below.',
     useHint: (count) => `Use a hint (${count} left)`,
-    questionPrompt: 'Which number matches this picture?',
+    questionPrompt: 'Which number is correct for this question?',
     playQuestion: 'Play Question Audio',
     stopQuestion: 'Stop Question Audio',
     correct: 'Correct',
     wrong: 'Not quite',
-    correctFeedback: (value, streak) => `Great job. This picture matches ${value}. Current streak: ${streak}.`,
-    wrongFeedback: (value) => `The correct answer is ${value}. Take another look at the picture and try again.`,
+    correctFeedback: (value, streak) => `Great job. The correct number is ${value}. Current streak: ${streak}.`,
+    wrongFeedback: (value) => `The correct answer is ${value}. Listen to the prompt again and try the next one.`,
     nextQuestion: 'Next',
     viewResult: 'See Results',
     resultScore: (score, total) => `Score ${score} / ${total}`,
@@ -1208,12 +1208,10 @@ function renderQuiz() {
       </section>
 
       <section class="panel question">
-        <img class="question__image" src="${question.image}" alt="${copy.questionPrompt}" />
         <p>${copy.questionPrompt}</p>
         <div class="hero__actions">
           <button class="soft-btn" data-action="play-question">${state.playingType === 'question' ? copy.stopQuestion : copy.playQuestion}</button>
           <button class="soft-btn" data-action="use-hint">${copy.useHint(quiz.hintCount)}</button>
-          <button class="soft-btn" data-action="preview-image" data-image="${question.image}" data-title="${copy.questionPrompt}">${copy.previewImage}</button>
         </div>
 
         <div class="options-grid">

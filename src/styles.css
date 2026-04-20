@@ -346,8 +346,7 @@ img {
     border-radius: 22px;
 }
 
-.web-image-wrap img,
-.question__image {
+.web-image-wrap img {
     width: 100%;
     border-radius: 22px;
     background: #f6ead4;
