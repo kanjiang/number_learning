@@ -517,14 +517,16 @@ img {
 
 .builder-grid {
     display: grid;
-    gap: 10px;
+    gap: 8px;
+    width: min(100%, 420px);
+    margin: 0 auto;
 }
 
 .builder-cell {
     position: relative;
     overflow: hidden;
     aspect-ratio: 1 / 1;
-    border-radius: 16px;
+    border-radius: 12px;
     background: rgba(255, 244, 220, 0.9);
     border: 2px solid rgba(214, 123, 0, 0.12);
 }

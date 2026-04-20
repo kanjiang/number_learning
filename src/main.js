@@ -11,6 +11,13 @@ speechAudio.preload = 'auto'
 fxAudio.preload = 'auto'
 fxOverlayAudio.preload = 'auto'
 
+const audioVolume = {
+  speechDefault: 0.82,
+  speechBoosted: 1,
+  effectDefault: 0.74,
+  effectBoosted: 1
+}
+
 const storageKeys = {
   language: 'numberWebLanguage',
   bestScore: 'numberWebBestScore',
@@ -166,7 +173,7 @@ const messages = {
     goQuizAction: '去做闯关题',
     buildBadge: '积木拼数字',
     buildTitle: (label) => `用积木拼出 ${label}`,
-    buildDesc: '先选择颜色，再点亮带小车图案的格子，把数字拼出来。每点一下都会鸣笛，拼好后还会鼓掌。',
+    buildDesc: '先选择颜色，再点亮带小车图案的格子，把数字拼出来。每点一下都会鸣笛，拼好后会播放“哇太棒了”。',
     resetBuild: '重新拼一遍',
     playCurrentMnemonic: '播放当前数字口诀',
     backToLearn: '返回学习页',
@@ -197,8 +204,11 @@ const messages = {
     playQuestion: '播放题目音频',
     stopQuestion: '停止题目音频',
     correct: '答对了',
+    retryCorrect: '找到了',
     wrong: '这题答错了',
     correctFeedback: (value, streak) => `真棒，正确数字是 ${value}。当前连续答对 ${streak} 题。`,
+    retryCorrectFeedback: (value) => `这次找到正确答案啦，是 ${value}。继续下一题吧。`,
+    wrongRetryFeedback: '这次还不对，再试试别的答案。',
     wrongFeedback: (value) => `正确答案是 ${value}，再听一遍题目会更容易记住。`,
     nextQuestion: '下一题',
     viewResult: '查看成绩',
@@ -304,7 +314,7 @@ const messages = {
     goQuizAction: 'Go To Quiz',
     buildBadge: 'Block Builder',
     buildTitle: (label) => `Build ${label} with blocks`,
-    buildDesc: 'Choose a color, then tap the car tiles to build the number. Every tap honks, and finishing the puzzle adds applause.',
+    buildDesc: 'Choose a color, then tap the car tiles to build the number. Every tap honks, and finishing the puzzle plays the praise audio.',
     resetBuild: 'Start Over',
     playCurrentMnemonic: 'Play Current Mnemonic',
     backToLearn: 'Back To Learn',
@@ -335,8 +345,11 @@ const messages = {
     playQuestion: 'Play Question Audio',
     stopQuestion: 'Stop Question Audio',
     correct: 'Correct',
+    retryCorrect: 'Found it',
     wrong: 'Not quite',
     correctFeedback: (value, streak) => `Great job. The correct number is ${value}. Current streak: ${streak}.`,
+    retryCorrectFeedback: (value) => `You found the correct answer. It is ${value}. Move on to the next question.`,
+    wrongRetryFeedback: 'That is not it yet. Try another answer.',
     wrongFeedback: (value) => `The correct answer is ${value}. Listen to the prompt again and try the next one.`,
     nextQuestion: 'Next',
     viewResult: 'See Results',
@@ -400,6 +413,22 @@ function getPaletteLabel(palette) {
   return state.selectedLanguage === 'en' ? palette.labelEn : palette.labelZh
 }
 
+function isBoostedSpeechSource(src) {
+  return /\/assets\/audio\/(zh-custom|mnemonic-custom)\//.test(src)
+}
+
+function isBoostedEffectSource(src) {
+  return /\/assets\/audio\/effects-custom\//.test(src)
+}
+
+function getSpeechVolume(src) {
+  return isBoostedSpeechSource(src) ? audioVolume.speechBoosted : audioVolume.speechDefault
+}
+
+function getEffectVolume(src) {
+  return isBoostedEffectSource(src) ? audioVolume.effectBoosted : audioVolume.effectDefault
+}
+
 function playEffect(src, useOverlay = false) {
   if (!src) {
     return
@@ -408,6 +437,7 @@ function playEffect(src, useOverlay = false) {
   player.pause()
   player.currentTime = 0
   player.src = src
+  player.volume = getEffectVolume(src)
   player.play().catch(() => {})
 }
 
@@ -424,6 +454,7 @@ function playAudioSource(src, type, errorTitle, showErrorModal = true) {
   speechAudio.pause()
   speechAudio.currentTime = 0
   speechAudio.src = src
+  speechAudio.volume = getSpeechVolume(src)
   speechAudio.load()
   state.playingType = type
   speechAudio.play().catch(() => {
@@ -519,7 +550,7 @@ function toggleBuilderCell(value, rowIndex, columnIndex) {
   const card = getCardByValue(value)
   playHorn(card)
   if (!wasComplete && isBuilderComplete(value)) {
-    playEffect(effectAudio.applause, true)
+    playEffect(effectAudio.complete, true)
   }
   render()
 }
@@ -698,6 +729,7 @@ function createQuizState() {
     bestStreak: 0,
     hintCount: 2,
     answered: false,
+    wrongSelections: [],
     selectedValue: null,
     feedbackTitle: '',
     feedbackText: '',
@@ -782,24 +814,44 @@ function chooseOption(value) {
     return
   }
 
+  if (quiz.wrongSelections.includes(value)) {
+    return
+  }
+
   const copy = getCopy()
   const isCorrect = value === question.correctValue
-  const nextScore = isCorrect ? quiz.score + 1 : quiz.score
-  const nextStreak = isCorrect ? quiz.streak + 1 : 0
+  if (!isCorrect) {
+    quiz.selectedValue = value
+    quiz.streak = 0
+    quiz.wrongSelections = [...quiz.wrongSelections, value]
+    quiz.feedbackType = 'wrong'
+    quiz.feedbackTitle = copy.wrong
+    quiz.feedbackText = copy.wrongRetryFeedback
+    quiz.celebrate = false
+
+    playEffect(effectAudio.wrong)
+    playSelectedValueAudio(value)
+    render()
+    return
+  }
+
+  const earnedPoint = quiz.wrongSelections.length === 0
+  const nextScore = earnedPoint ? quiz.score + 1 : quiz.score
+  const nextStreak = earnedPoint ? quiz.streak + 1 : 0
 
   quiz.answered = true
   quiz.selectedValue = value
   quiz.score = nextScore
   quiz.streak = nextStreak
   quiz.bestStreak = Math.max(quiz.bestStreak, nextStreak)
-  quiz.feedbackType = isCorrect ? 'correct' : 'wrong'
-  quiz.feedbackTitle = isCorrect ? copy.correct : copy.wrong
-  quiz.feedbackText = isCorrect
+  quiz.feedbackType = 'correct'
+  quiz.feedbackTitle = earnedPoint ? copy.correct : copy.retryCorrect
+  quiz.feedbackText = earnedPoint
     ? copy.correctFeedback(question.correctValue, nextStreak)
-    : copy.wrongFeedback(question.correctValue)
-  quiz.celebrate = isCorrect
+    : copy.retryCorrectFeedback(question.correctValue)
+  quiz.celebrate = true
 
-  playEffect(isCorrect ? effectAudio.correct : effectAudio.wrong)
+  playEffect(effectAudio.correct)
   playSelectedValueAudio(value)
   render()
 }
@@ -827,6 +879,7 @@ function nextQuestion() {
 
   quiz.currentIndex += 1
   quiz.answered = false
+  quiz.wrongSelections = []
   quiz.selectedValue = null
   quiz.feedbackTitle = ''
   quiz.feedbackText = ''
@@ -1220,7 +1273,7 @@ function renderQuiz() {
               let stateClass = ''
               if (quiz.answered && option.value === question.correctValue) {
                 stateClass = ' option-card--correct'
-              } else if (quiz.answered && option.value === quiz.selectedValue && option.value !== question.correctValue) {
+              } else if (quiz.wrongSelections.includes(option.value)) {
                 stateClass = ' option-card--wrong'
               }
               return `
