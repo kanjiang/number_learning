@@ -116,7 +116,7 @@ const messages = {
     modalOk: '我知道了',
     homeBadge: 'Web 调试版',
     homeTitle: '和喜欢车车的小朋友一起学数字',
-    homeDesc: '这一版可以直接在浏览器调试，保留数字卡片、图片热点、中英发音、鸣笛音效和闯关玩法。',
+    homeDesc: '',
     homeStatImages: '张数字图片',
     homeStatLanguages: '种语言发音',
     homeStatEffects: '种互动音效',
@@ -126,7 +126,6 @@ const messages = {
     chooseNumber: '选择一个数字开始',
     chooseNumberDesc: '先看图，再听中英文发音，然后进入闯关模式。',
     startLearning: '开始学习',
-    learnBadge: '双语学习',
     learnDesc: '支持数字口诀、中英发音、数字学习动画和积木拼数字玩法，也支持点击小汽车热点播放鸣笛音效。',
     chinese: '中文',
     english: 'English',
@@ -140,7 +139,6 @@ const messages = {
     hotspotSpeech: '数字发音',
     hotspotHorn: '汽车鸣笛',
     hotspotHint: '橙色热点会播放当前数字发音，蓝色小汽车热点会播放鸣笛声音。',
-    mnemonicBadge: '数字口诀',
     mnemonicHint: '点击图片里的数字也会直接播放这句口诀。',
     playMnemonic: '播放数字口诀',
     stopMnemonic: '停止数字口诀',
@@ -159,7 +157,6 @@ const messages = {
     next: '下一个',
     currentNumber: '当前数字',
     hotspotCount: '热点数量',
-    playbackMode: '发音模式',
     editMode: '拖拽调试',
     enabled: '已开启',
     disabled: '未开启',
@@ -168,12 +165,10 @@ const messages = {
     interactionTip: '互动提示',
     playHorn: '播放鸣笛',
     previewImage: '查看大图',
-    watchVideosAction: '边看动画边学数字',
     buildWithBlocks: '积木拼数字',
-    goQuizAction: '去做闯关题',
     buildBadge: '积木拼数字',
     buildTitle: (label) => `用积木拼出 ${label}`,
-    buildDesc: '先选择颜色，再点亮带小车图案的格子，把数字拼出来。每点一下都会鸣笛，拼好后会播放“哇太棒了”。',
+    buildDesc: '点击格子，把数字拼出来。',
     resetBuild: '重新拼一遍',
     playCurrentMnemonic: '播放当前数字口诀',
     backToLearn: '返回学习页',
@@ -257,7 +252,7 @@ const messages = {
     modalOk: 'Got it',
     homeBadge: 'Web Edition',
     homeTitle: 'Learn numbers with fun little cars',
-    homeDesc: 'This browser version keeps number cards, image hotspots, bilingual audio, horn sounds, and quiz play.',
+    homeDesc: '',
     homeStatImages: 'number images',
     homeStatLanguages: 'audio languages',
     homeStatEffects: 'interactive sounds',
@@ -267,7 +262,6 @@ const messages = {
     chooseNumber: 'Pick a number to begin',
     chooseNumberDesc: 'Look at the picture, listen to the Chinese and English audio, then try the quiz.',
     startLearning: 'Start Learning',
-    learnBadge: 'Bilingual Learning',
     learnDesc: 'This page includes number mnemonics, Chinese and English audio, learning videos, block building, and car horn hotspots.',
     chinese: 'Chinese',
     english: 'English',
@@ -281,7 +275,6 @@ const messages = {
     hotspotSpeech: 'Number Audio',
     hotspotHorn: 'Horn',
     hotspotHint: 'Orange hotspots play the current number audio. Blue car hotspots play the horn sound.',
-    mnemonicBadge: 'Number Mnemonic',
     mnemonicHint: 'Tapping the number inside the picture will also play this mnemonic.',
     playMnemonic: 'Play Mnemonic',
     stopMnemonic: 'Stop Mnemonic',
@@ -300,7 +293,6 @@ const messages = {
     next: 'Next',
     currentNumber: 'Current Number',
     hotspotCount: 'Hotspots',
-    playbackMode: 'Playback Mode',
     editMode: 'Drag Mode',
     enabled: 'On',
     disabled: 'Off',
@@ -309,12 +301,10 @@ const messages = {
     interactionTip: 'Learning Tip',
     playHorn: 'Play Horn',
     previewImage: 'Preview Image',
-    watchVideosAction: 'Watch Learning Videos',
     buildWithBlocks: 'Build With Blocks',
-    goQuizAction: 'Go To Quiz',
     buildBadge: 'Block Builder',
     buildTitle: (label) => `Build ${label} with blocks`,
-    buildDesc: 'Choose a color, then tap the car tiles to build the number. Every tap honks, and finishing the puzzle plays the praise audio.',
+    buildDesc: 'Tap the tiles to build the number.',
     resetBuild: 'Start Over',
     playCurrentMnemonic: 'Play Current Mnemonic',
     backToLearn: 'Back To Learn',
@@ -937,22 +927,19 @@ function renderHome() {
 
   return `
     <main class="page-shell">
-      <section class="hero panel">
-        <span class="hero__badge">${copy.homeBadge}</span>
+      <section class="hero hero--home panel">
         <h1>${copy.homeTitle}</h1>
-        <p>${copy.homeDesc}</p>
         <div class="hero__actions">
           <button class="primary-btn" data-nav="/quiz">${copy.startQuiz}</button>
           <button class="accent-btn" data-nav="/build/1">${copy.goBuild}</button>
         </div>
       </section>
 
-      <section class="section-head">
+      <section class="section-head section-head--compact">
         <h2>${copy.chooseNumber}</h2>
-        <p>${copy.chooseNumberDesc}</p>
       </section>
 
-      <section class="cards-grid">
+      <section class="cards-grid cards-grid--home">
         ${numberCards
           .map((card) => `
             <button class="panel number-card number-card--compact" data-nav="/learn/${card.value}" aria-label="${copy.startLearning} ${card.value}">
@@ -998,10 +985,8 @@ function renderLearn() {
   return `
     <main class="page-shell">
       <section class="learn-banner panel">
-        <span class="learn-banner__badge">${copy.learnBadge}</span>
         <h1>${content.label}</h1>
-        <p>${content.tip}</p>
-        <div class="lang-switch">
+        <div class="lang-switch lang-switch--compact">
           <button class="chip ${state.selectedLanguage === 'zh' ? 'chip--active' : ''}" data-language="zh">${copy.chinese}</button>
           <button class="chip ${state.selectedLanguage === 'en' ? 'chip--active' : ''}" data-language="en">${copy.english}</button>
         </div>
@@ -1016,10 +1001,9 @@ function renderLearn() {
             </div>
           </section>
 
-          <section class="panel mnemonic-card">
-            <span class="mnemonic-card__badge">${copy.mnemonicBadge}</span>
+          <section class="panel mnemonic-card mnemonic-card--compact">
             <h3>${content.mnemonic}</h3>
-            <div class="hero__actions">
+            <div class="hero__actions hero__actions--compact">
               <button class="primary-btn" data-action="play-mnemonic" data-card-value="${card.value}">${state.playingType === 'mnemonic' ? copy.stopMnemonic : copy.playMnemonic}</button>
               <button class="soft-btn" data-action="play-zh" data-card-value="${card.value}">${state.playingType === 'zh' ? copy.stopChineseAudio : copy.playChineseAudio}</button>
               <button class="soft-btn" data-action="play-en" data-card-value="${card.value}">${state.playingType === 'en' ? copy.stopEnglishAudio : copy.playEnglishAudio}</button>
@@ -1028,27 +1012,20 @@ function renderLearn() {
         </div>
 
         <aside class="panel learn-side">
-          <h3>${copy.interactionTip}</h3>
-          <p>${content.tip}</p>
-
           <div class="learn-side__meta">
             <span>${copy.currentNumber}</span>
             <strong>${card.value}</strong>
           </div>
-          <div class="learn-side__meta">
-            <span>${copy.playbackMode}</span>
-            <strong>${state.selectedLanguage === 'en' ? copy.english : copy.chinese}</strong>
+
+          <div class="learn-side__pager">
+            <button class="soft-btn soft-btn--icon" ${previousCard ? `data-nav="/learn/${previousCard.value}"` : 'disabled'} aria-label="${copy.previous}" title="${copy.previous}">←</button>
+            <button class="soft-btn learn-side__preview-btn" data-action="preview-image" data-image="${card.image}" data-title="${content.label}">${copy.previewImage}</button>
+            <button class="soft-btn soft-btn--icon" ${nextCard ? `data-nav="/learn/${nextCard.value}"` : 'disabled'} aria-label="${copy.next}" title="${copy.next}">→</button>
           </div>
 
-          <div class="actions-grid">
-            <button class="soft-btn" ${previousCard ? `data-nav="/learn/${previousCard.value}"` : 'disabled'}>${copy.previous}</button>
-            <button class="soft-btn" ${nextCard ? `data-nav="/learn/${nextCard.value}"` : 'disabled'}>${copy.next}</button>
-            <button class="soft-btn" data-action="preview-image" data-image="${card.image}" data-title="${content.label}">${copy.previewImage}</button>
+          <div class="learn-side__actions">
+            <button class="accent-btn learn-side__build-btn" data-nav="/build/${card.value}">${copy.buildNumber(card.value)}</button>
           </div>
-
-          <button class="soft-btn learn-side__stack-btn" data-nav="/videos/${card.value}">${copy.watchVideosAction}</button>
-          <button class="accent-btn learn-side__build-btn" data-nav="/build/${card.value}">${copy.buildNumber(card.value)}</button>
-          <button class="soft-btn learn-side__stack-btn" data-nav="/quiz">${copy.goQuizAction}</button>
         </aside>
       </section>
     </main>
@@ -1058,14 +1035,12 @@ function renderLearn() {
 function renderVideos() {
   const copy = getCopy()
   const card = getCardByValue(state.route.id || 1)
-  const content = getCardContent(card)
 
   return `
     <main class="page-shell">
       <section class="learn-banner panel">
         <span class="learn-banner__badge">${copy.videoBadge}</span>
         <h1>${copy.videoTitle}</h1>
-        <p>${content.label} · ${copy.videoPageDesc}</p>
       </section>
 
       <section class="panel video-section">
@@ -1096,7 +1071,6 @@ function renderBuild() {
   const content = getCardContent(card)
   const pattern = getPatternByValue(card.value)
   const session = getBuilderSession(card.value)
-  const cellCount = getPatternCellCount(pattern)
   const complete = isBuilderComplete(card.value)
 
   return `
@@ -1104,7 +1078,6 @@ function renderBuild() {
       <section class="learn-banner panel">
         <span class="learn-banner__badge">${copy.buildBadge}</span>
         <h1>${copy.buildTitle(content.label)}</h1>
-        <p>${copy.buildDesc}</p>
       </section>
 
       <section class="panel builder-controls">
@@ -1112,7 +1085,7 @@ function renderBuild() {
           ${numberCards
             .map(
               (item) => `
-                <button class="chip ${item.value === card.value ? 'chip--active' : ''}" data-nav="/build/${item.value}">${item.value}</button>
+                <button class="chip builder-selector__chip ${item.value === card.value ? 'chip--active' : ''}" data-nav="/build/${item.value}">${item.value}</button>
               `
             )
             .join('')}
@@ -1122,9 +1095,8 @@ function renderBuild() {
           ${builderPalette
             .map(
               (palette) => `
-                <button class="builder-color ${session.selectedColor === palette.id ? 'builder-color--active' : ''}" data-action="builder-color" data-card-value="${card.value}" data-color-id="${palette.id}">
+                <button class="builder-color ${session.selectedColor === palette.id ? 'builder-color--active' : ''}" data-action="builder-color" data-card-value="${card.value}" data-color-id="${palette.id}" title="${getPaletteLabel(palette)}" aria-label="${getPaletteLabel(palette)}">
                   <span class="builder-color__swatch builder-color__swatch--${palette.id}"></span>
-                  <span>${getPaletteLabel(palette)}</span>
                 </button>
               `
             )
@@ -1157,32 +1129,19 @@ function renderBuild() {
         </section>
 
         <aside class="panel builder-side">
-          <h3>${copy.currentTarget}</h3>
-          <p>${content.mnemonic}</p>
-
           <div class="learn-side__meta">
             <span>${copy.number}</span>
             <strong>${card.value}</strong>
           </div>
-          <div class="learn-side__meta">
-            <span>${copy.cells}</span>
-            <strong>${cellCount}</strong>
-          </div>
-          <div class="learn-side__meta">
-            <span>${copy.status}</span>
-            <strong>${complete ? copy.completed : copy.building}</strong>
-          </div>
 
-          <div class="actions-grid">
+          <div class="actions-grid actions-grid--builder">
             <button class="soft-btn" data-action="reset-build" data-card-value="${card.value}">${copy.resetBuild}</button>
-            <button class="soft-btn" data-action="play-mnemonic" data-card-value="${card.value}">${copy.playCurrentMnemonic}</button>
             <button class="soft-btn" data-nav="/learn/${card.value}">${copy.backToLearn}</button>
           </div>
 
           <div class="builder-success ${complete ? '' : 'builder-success--idle'}">
             ${complete ? copy.buildSuccess : copy.buildIdle}
           </div>
-          <p>${copy.buildGoalHint}</p>
         </aside>
       </section>
     </main>
@@ -1238,8 +1197,7 @@ function renderQuiz() {
       <section class="quiz-head panel">
         <span class="badge">${copy.quizQuestion(quiz.currentIndex + 1)}</span>
         <h1>${copy.quizTitle}</h1>
-        <p>${copy.quizDesc}</p>
-        <div class="quiz-summary">
+        <div class="quiz-summary quiz-summary--compact">
           <div class="quiz-summary__card">
             <strong>${quiz.score}</strong>
             <span>${copy.quizScore(quiz.score, quiz.questions.length)}</span>
@@ -1255,16 +1213,17 @@ function renderQuiz() {
         </div>
       </section>
 
-      <section class="panel quiz-tip">
-        <h3>${copy.quizGuideTitle}</h3>
-        <p>${copy.quizGuideText}</p>
-      </section>
-
       <section class="panel question">
         <p>${copy.questionPrompt}</p>
-        <div class="hero__actions">
-          <button class="soft-btn" data-action="play-question">${state.playingType === 'question' ? copy.stopQuestion : copy.playQuestion}</button>
-          <button class="soft-btn" data-action="use-hint">${copy.useHint(quiz.hintCount)}</button>
+        <div class="hero__actions quiz-actions">
+          <button class="soft-btn soft-btn--with-icon" data-action="play-question">
+            <span class="soft-btn__icon" aria-hidden="true">🔊</span>
+            <span>${state.playingType === 'question' ? copy.stopQuestion : copy.playQuestion}</span>
+          </button>
+          <button class="soft-btn soft-btn--with-icon" data-action="use-hint">
+            <span class="soft-btn__icon" aria-hidden="true">💡</span>
+            <span>${copy.useHint(quiz.hintCount)}</span>
+          </button>
         </div>
 
         <div class="options-grid">
@@ -1284,14 +1243,13 @@ function renderQuiz() {
         </div>
 
         ${quiz.feedbackTitle ? `
-          <div class="panel feedback feedback--${quiz.feedbackType}">
-            <h3>${quiz.feedbackTitle}</h3>
-            <p>${quiz.feedbackText}</p>
+          <div class="panel feedback feedback--${quiz.feedbackType} feedback--compact">
+            <p><strong class="feedback__title">${quiz.feedbackTitle}</strong>${quiz.feedbackText ? ` ${quiz.feedbackText}` : ''}</p>
           </div>
         ` : ''}
 
         ${quiz.answered ? `
-          <div class="hero__actions">
+          <div class="hero__actions quiz-actions quiz-actions--footer">
             <button class="primary-btn" data-action="next-question">${quiz.currentIndex === quiz.questions.length - 1 ? copy.viewResult : copy.nextQuestion}</button>
           </div>
         ` : ''}

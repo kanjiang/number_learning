@@ -3,9 +3,8 @@
     font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
     color: #3b2f2f;
     background:
-        radial-gradient(circle at top left, rgba(255, 237, 176, 0.78) 0%, rgba(255, 237, 176, 0) 34%),
-        radial-gradient(circle at top right, rgba(255, 210, 154, 0.62) 0%, rgba(255, 210, 154, 0) 28%),
-        linear-gradient(180deg, #fff9ef 0%, #fef0d8 100%);
+        radial-gradient(circle at top left, rgba(255, 237, 176, 0.58) 0%, rgba(255, 237, 176, 0) 30%),
+        linear-gradient(180deg, #fffaf2 0%, #f8edd9 100%);
 }
 
 * {
@@ -39,22 +38,22 @@ img {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 16px;
-    padding: 16px 22px;
-    backdrop-filter: blur(14px);
-    background: rgba(255, 251, 243, 0.82);
+    gap: 12px;
+    padding: 12px 18px;
+    backdrop-filter: blur(10px);
+    background: rgba(255, 251, 243, 0.88);
     border-bottom: 1px solid rgba(215, 175, 121, 0.2);
 }
 
 .topbar__brand {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 700;
     color: #6b3d00;
 }
 
 .topbar__nav {
     display: flex;
-    gap: 10px;
+    gap: 8px;
 }
 
 .topbar__nav button,
@@ -65,8 +64,8 @@ img {
 .challenge__button,
 .primary-btn,
 .accent-btn {
-    height: 44px;
-    padding: 0 18px;
+    height: 40px;
+    padding: 0 16px;
     border-radius: 999px;
 }
 
@@ -90,24 +89,28 @@ img {
 }
 
 .page-shell {
-    max-width: 1180px;
+    max-width: 1080px;
     margin: 0 auto;
-    padding: 28px 20px 56px;
+    padding: 22px 18px 44px;
 }
 
 .panel {
     background: rgba(255, 255, 255, 0.9);
-    border-radius: 24px;
+    border-radius: 20px;
     border: 1px solid rgba(255, 255, 255, 0.55);
-    box-shadow: 0 16px 40px rgba(204, 141, 58, 0.12);
+    box-shadow: 0 10px 28px rgba(204, 141, 58, 0.1);
 }
 
 .hero,
 .learn-banner,
 .about-hero,
 .quiz-head {
-    padding: 28px;
-    background: linear-gradient(135deg, #fff5dc 0%, #ffd78f 100%);
+    padding: 22px;
+    background: linear-gradient(135deg, #fff7e6 0%, #ffe1a7 100%);
+}
+
+.hero--home {
+    padding: 20px 22px;
 }
 
 .hero h1,
@@ -116,7 +119,7 @@ img {
 .about-hero h1,
 .result h1 {
     margin: 14px 0 0;
-    font-size: clamp(28px, 4vw, 42px);
+    font-size: clamp(26px, 3.6vw, 38px);
     line-height: 1.2;
     color: #5a3410;
 }
@@ -157,7 +160,20 @@ img {
 .actions-grid {
     display: flex;
     flex-wrap: wrap;
-    gap: 12px;
+    gap: 10px;
+}
+
+.hero__actions--compact,
+.lang-switch--compact {
+    gap: 8px;
+}
+
+.hero__actions--compact .soft-btn,
+.hero__actions--compact .primary-btn,
+.lang-switch--compact .chip {
+    height: 36px;
+    padding: 0 12px;
+    font-size: 14px;
 }
 
 .hero__stats,
@@ -190,6 +206,27 @@ img {
     font-size: 14px;
 }
 
+.quiz-summary--compact {
+    gap: 10px;
+    margin-top: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+}
+
+.quiz-summary--compact .quiz-summary__card {
+    gap: 4px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.64);
+}
+
+.quiz-summary--compact .quiz-summary__card strong {
+    font-size: 20px;
+}
+
+.quiz-summary--compact .quiz-summary__card span {
+    font-size: 12px;
+}
+
 .hero__actions,
 .lang-switch,
 .guide,
@@ -199,7 +236,7 @@ img {
 .about-summary,
 .about-section,
 .release {
-    margin-top: 22px;
+    margin-top: 18px;
 }
 
 .guide,
@@ -207,43 +244,43 @@ img {
 .about-summary,
 .about-section,
 .release {
-    padding: 22px 24px;
+    padding: 18px 20px;
 }
 
 .learn-layout {
     display: grid;
-    gap: 18px;
-    margin-top: 22px;
-    grid-template-columns: minmax(0, 1.7fr) minmax(260px, 0.9fr);
+    gap: 16px;
+    margin-top: 18px;
+    grid-template-columns: minmax(0, 1.75fr) minmax(250px, 0.82fr);
 }
 
 .learn-side {
-    padding: 22px 24px;
+    padding: 16px 18px;
     align-self: start;
 }
 
 .learn-side h3 {
     margin: 0;
-    font-size: 22px;
+    font-size: 20px;
     color: #5a3410;
 }
 
 .learn-side p {
-    margin: 16px 0 0;
+    margin: 12px 0 0;
     color: #7a5d3b;
-    line-height: 1.7;
+    line-height: 1.6;
 }
 
 .learn-side__meta {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 12px 0;
+    padding: 10px 0;
     border-bottom: 1px dashed rgba(197, 152, 81, 0.25);
 }
 
 .learn-side__meta:first-of-type {
-    margin-top: 14px;
+    margin-top: 0;
 }
 
 .learn-side__meta span {
@@ -256,6 +293,10 @@ img {
 
 .section-head {
     margin-top: 28px;
+}
+
+.section-head--compact {
+    margin-top: 16px;
 }
 
 .section-head h2,
@@ -272,14 +313,29 @@ img {
 .cards-grid,
 .options-grid {
     display: grid;
-    gap: 16px;
-    margin-top: 24px;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 14px;
+    margin-top: 18px;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+}
+
+.cards-grid--home {
+    gap: 12px;
+    margin-top: 14px;
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+}
+
+.cards-grid--home .number-card--compact {
+    min-height: 92px;
+    padding: 16px;
+}
+
+.cards-grid--home .number-card__value {
+    font-size: 42px;
 }
 
 .number-card,
 .option-card {
-    padding: 24px;
+    padding: 20px;
     text-align: left;
     transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
@@ -294,7 +350,7 @@ img {
 .number-card--compact {
     align-items: center;
     justify-content: center;
-    min-height: 132px;
+    min-height: 112px;
     text-align: center;
 }
 
@@ -309,13 +365,13 @@ img {
 
 .number-card__value {
     display: block;
-    font-size: 40px;
+    font-size: 36px;
     font-weight: 800;
     color: #d67b00;
 }
 
 .number-card--compact .number-card__value {
-    font-size: 56px;
+    font-size: 48px;
 }
 
 .number-card__image {
@@ -395,27 +451,22 @@ img {
 .builder-side,
 .builder-controls {
     margin-top: 18px;
-    padding: 22px 24px;
+    padding: 18px 20px;
 }
 
 .mnemonic-card {
     background: linear-gradient(135deg, rgba(255, 247, 222, 0.98) 0%, rgba(255, 232, 176, 0.95) 100%);
 }
 
-.mnemonic-card__badge {
-    display: inline-block;
-    padding: 8px 14px;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.72);
-    color: #9a5d00;
-    font-size: 14px;
+.mnemonic-card--compact {
+    padding: 16px 18px;
 }
 
 .mnemonic-card h3,
 .builder-side h3 {
-    margin: 14px 0 0;
-    font-size: 28px;
-    line-height: 1.45;
+    margin: 0;
+    font-size: 24px;
+    line-height: 1.4;
     color: #5a3410;
 }
 
@@ -449,45 +500,99 @@ img {
     margin-top: 14px;
 }
 
-.learn-side__build-btn {
-    margin-top: 18px;
+.learn-side__actions {
+    display: grid;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.learn-side__build-btn,
+.learn-side__stack-btn {
     width: 100%;
 }
 
-.learn-side__stack-btn {
-    margin-top: 12px;
+.learn-side__pager {
+    display: grid;
+    gap: 10px;
+    margin-top: 16px;
+    grid-template-columns: 52px minmax(0, 1fr) 52px;
+}
+
+.learn-side__preview-btn {
     width: 100%;
+}
+
+.soft-btn--icon {
+    min-width: 0;
+    padding: 0;
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.soft-btn--with-icon {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.soft-btn__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    line-height: 1;
+}
+
+.soft-btn:disabled,
+.soft-btn--icon:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    transform: none;
 }
 
 .builder-controls {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.96) 0%, rgba(255, 245, 220, 0.96) 100%);
+    padding: 10px 12px;
+    background: rgba(255, 255, 255, 0.78);
 }
 
 .builder-selector,
 .builder-palette {
     display: flex;
     flex-wrap: wrap;
-    gap: 12px;
+    gap: 6px;
+}
+
+.builder-selector {
+    align-items: center;
+}
+
+.builder-selector__chip {
+    height: 32px;
+    min-width: 32px;
+    padding: 0 10px;
+    border-radius: 12px;
+    font-size: 14px;
 }
 
 .builder-palette {
-    margin-top: 18px;
+    margin-top: 8px;
 }
 
 .builder-color {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
-    min-height: 48px;
-    padding: 0 16px;
-    border-radius: 999px;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border-radius: 50%;
     background: rgba(255, 255, 255, 0.82);
-    color: #7d5117;
+    border: 1px solid rgba(214, 123, 0, 0.12);
 }
 
 .builder-color--active {
-    outline: 2px solid rgba(244, 166, 33, 0.58);
-    background: rgba(255, 243, 221, 0.96);
+    outline: 2px solid rgba(244, 166, 33, 0.48);
+    background: rgba(255, 247, 232, 0.96);
 }
 
 .builder-color__swatch {
@@ -510,9 +615,9 @@ img {
 
 .builder-layout {
     display: grid;
-    gap: 18px;
-    margin-top: 22px;
-    grid-template-columns: minmax(0, 1.5fr) minmax(260px, 0.9fr);
+    gap: 12px;
+    margin-top: 14px;
+    grid-template-columns: minmax(0, 1.64fr) minmax(200px, 0.78fr);
 }
 
 .builder-grid {
@@ -593,17 +698,40 @@ img {
 }
 
 .builder-success {
-    margin-top: 18px;
-    padding: 14px 16px;
-    border-radius: 18px;
+    margin-top: 14px;
+    padding: 12px 14px;
+    border-radius: 16px;
     background: linear-gradient(135deg, #d8f6d7 0%, #b8e9af 100%);
     color: #356133;
     font-weight: 700;
 }
 
 .builder-success--idle {
-    background: linear-gradient(135deg, rgba(255, 247, 222, 0.98) 0%, rgba(255, 232, 176, 0.95) 100%);
+    background: rgba(255, 247, 222, 0.9);
     color: #8a5a11;
+}
+
+.actions-grid--builder {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    margin-top: 14px;
+}
+
+.quiz-actions {
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.quiz-actions .soft-btn,
+.quiz-actions .primary-btn {
+    height: 36px;
+    padding: 0 12px;
+    font-size: 14px;
+}
+
+.quiz-actions--footer {
+    margin-top: 16px;
 }
 
 .editor-toolbar {
@@ -679,6 +807,20 @@ img {
 .result {
     margin-top: 24px;
     padding: 24px;
+}
+
+.feedback--compact {
+    margin-top: 16px;
+    padding: 14px 16px;
+    border-radius: 14px;
+}
+
+.feedback--compact p {
+    margin: 0;
+}
+
+.feedback__title {
+    color: #5a3410;
 }
 
 .result__stars {
@@ -806,6 +948,26 @@ img {
     .soft-btn,
     .primary-btn,
     .accent-btn {
+        width: 100%;
+    }
+
+    .learn-side__pager {
+        grid-template-columns: 48px minmax(0, 1fr) 48px;
+    }
+
+    .builder-selector__chip {
+        height: 30px;
+        min-width: 30px;
+        padding: 0 8px;
+        border-radius: 10px;
+        font-size: 13px;
+    }
+
+    .soft-btn--icon {
+        width: 48px;
+    }
+
+    .learn-side__preview-btn {
         width: 100%;
     }
 }
