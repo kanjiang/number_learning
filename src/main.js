@@ -594,7 +594,6 @@ function playAudioSource(src, type, errorTitle, showErrorModal = true) {
 function playSpeech(card, language, options = {}) {
   const targetLanguage = language || state.selectedLanguage
   const src = targetLanguage === 'en' ? card.audioEn : card.audioZh
-  persistLanguage(targetLanguage)
   playAudioSource(src, targetLanguage, getCopy().speechError, options.showErrorModal ?? true)
 }
 
