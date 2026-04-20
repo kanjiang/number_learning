@@ -48,7 +48,8 @@ const state = {
   editMode: false,
   hotspotDrafts: loadHotspotDrafts(),
   draggingHotspot: null,
-  builderSessions: {}
+  builderSessions: {},
+  countSessions: {}
 }
 
 speechAudio.addEventListener('ended', () => {
@@ -104,6 +105,7 @@ const messages = {
     navHome: '首页',
     navVideos: '看动画',
     navBuild: '积木',
+    navCount: '数车子',
     navQuiz: '闯关',
     navAbout: '关于',
     audioUnavailable: '音频不可用',
@@ -162,6 +164,7 @@ const messages = {
     disabled: '未开启',
     sideNote: '建议先听口诀，再听中英发音，然后看动画，最后通过积木拼出对应数字。',
     buildNumber: (value) => `去拼 ${value} 号积木数字`,
+    countCarsAction: '数一数小汽车',
     interactionTip: '互动提示',
     playHorn: '播放鸣笛',
     previewImage: '查看大图',
@@ -182,6 +185,16 @@ const messages = {
     buildGoalHint: '把所有浅色轮廓格子都拼满，就完成这个数字啦。',
     buildSuccess: '拼好啦，真棒。',
     buildIdle: '继续点亮积木块，把数字完整拼出来。',
+    countBadge: '数小汽车',
+    countTitle: () => '数一数下面图片中有几辆车',
+    countPrompt: '图片里一共有几辆小汽车？',
+    countHint: '每数到一辆小汽车，就点一下图片。',
+    countProgress: (found, total) => `已数到 ${found} / ${total} 辆`,
+    countDone: (total) => `都找到了，一共 ${total} 辆小汽车。`,
+    countIdle: '一边看图一边点，试着把小汽车都数出来。',
+    countReset: '重新数一遍',
+    countAnswerCorrect: (value) => `答对了，一共有 ${value} 辆小汽车。`,
+    countAnswerWrong: (value) => `你选了 ${value}，再数一数试试。`,
     quizDone: '闯关完成',
     quizTitle: '数字闯关',
     quizScore: (score, total) => `得分 ${score} / ${total}`,
@@ -240,6 +253,7 @@ const messages = {
     navHome: 'Home',
     navVideos: 'Videos',
     navBuild: 'Blocks',
+    navCount: 'Count Cars',
     navQuiz: 'Quiz',
     navAbout: 'About',
     audioUnavailable: 'Audio unavailable',
@@ -298,6 +312,7 @@ const messages = {
     disabled: 'Off',
     sideNote: 'Try the mnemonic first, then the Chinese and English audio, watch a video, and finally build the number with blocks.',
     buildNumber: (value) => `Build Number ${value}`,
+    countCarsAction: 'Count The Cars',
     interactionTip: 'Learning Tip',
     playHorn: 'Play Horn',
     previewImage: 'Preview Image',
@@ -318,6 +333,16 @@ const messages = {
     buildGoalHint: 'Fill every highlighted cell to complete the number.',
     buildSuccess: 'Great job, you built it.',
     buildIdle: 'Keep filling the highlighted cells to complete the number.',
+    countBadge: 'Count Cars',
+    countTitle: () => 'Count how many cars are in the picture below',
+    countPrompt: 'How many cars are in this picture?',
+    countHint: 'Tap the image once for each car you count.',
+    countProgress: (found, total) => `Counted ${found} / ${total}`,
+    countDone: (total) => `You found them all. There are ${total} cars.`,
+    countIdle: 'Count the cars while tapping the image.',
+    countReset: 'Count Again',
+    countAnswerCorrect: (value) => `Correct. There are ${value} cars.`,
+    countAnswerWrong: (value) => `You chose ${value}. Try counting again.`,
     quizDone: 'Quiz Complete',
     quizTitle: 'Number Quiz',
     quizScore: (score, total) => `Score ${score} / ${total}`,
@@ -401,6 +426,114 @@ function getHotspotLabel(type) {
 
 function getPaletteLabel(palette) {
   return state.selectedLanguage === 'en' ? palette.labelEn : palette.labelZh
+}
+
+function getCarHotspots(cardValue) {
+  return getHotspotsForCard(cardValue).filter((hotspot) => hotspot.type === 'horn')
+}
+
+function buildCountOptions(correctValue) {
+  const values = numberCards.map((item) => item.value).filter((value) => value !== correctValue)
+  return shuffle([correctValue, ...shuffle(values).slice(0, 3)])
+}
+
+function createCountSession(value) {
+  return {
+    countedCars: 0,
+    wrongAnswers: [],
+    selectedAnswer: null,
+    answerCorrect: false,
+    answerText: '',
+    options: buildCountOptions(value)
+  }
+}
+
+function getCountSession(value) {
+  if (!state.countSessions[value]) {
+    state.countSessions[value] = createCountSession(value)
+  }
+  return state.countSessions[value]
+}
+
+function resetCountSession(value) {
+  state.countSessions[value] = createCountSession(value)
+  render()
+}
+
+function countCar(value) {
+  const session = getCountSession(value)
+  if (session.countedCars < value) {
+    session.countedCars += 1
+    playSelectedValueAudio(session.countedCars)
+  }
+  playHorn(getCardByValue(value))
+  render()
+}
+
+function playCountSuccessAudio(value) {
+  const card = getCardByValue(value)
+  const src = state.selectedLanguage === 'en' ? card?.audioEn : card?.audioZh
+
+  if (!src) {
+    playEffect(effectAudio.complete, true)
+    return
+  }
+
+  if (pendingAutoSpeechTimer) {
+    window.clearTimeout(pendingAutoSpeechTimer)
+    pendingAutoSpeechTimer = null
+  }
+
+  let handled = false
+  const finish = () => {
+    if (handled) {
+      return
+    }
+    handled = true
+    speechAudio.removeEventListener('ended', finish)
+    state.playingType = ''
+    render()
+    playEffect(effectAudio.complete, true)
+  }
+
+  speechAudio.removeEventListener('ended', finish)
+  speechAudio.pause()
+  speechAudio.currentTime = 0
+  speechAudio.src = src
+  speechAudio.volume = getSpeechVolume(src)
+  speechAudio.load()
+  state.playingType = `count-answer-${value}`
+  speechAudio.addEventListener('ended', finish)
+  speechAudio.play().catch(() => {
+    speechAudio.removeEventListener('ended', finish)
+    state.playingType = ''
+    render()
+    playEffect(effectAudio.complete, true)
+  })
+  render()
+}
+
+function chooseCountAnswer(value, answer) {
+  const copy = getCopy()
+  const session = getCountSession(value)
+  const correctValue = value
+
+  session.selectedAnswer = answer
+  if (answer === correctValue) {
+    session.answerCorrect = true
+    session.answerText = copy.countAnswerCorrect(correctValue)
+    playCountSuccessAudio(correctValue)
+    render()
+    return
+  }
+
+  session.answerCorrect = false
+  session.answerText = copy.countAnswerWrong(answer)
+  if (!session.wrongAnswers.includes(answer)) {
+    session.wrongAnswers = [...session.wrongAnswers, answer]
+  }
+  playEffect(effectAudio.wrong)
+  render()
 }
 
 function isBoostedSpeechSource(src) {
@@ -915,6 +1048,7 @@ function renderNav() {
         <button class="${navPage === 'home' ? 'chip chip--active' : 'chip'}" data-nav="/">${copy.navHome}</button>
         <button class="${navPage === 'videos' ? 'chip chip--active' : 'chip'}" data-nav="/videos/1">${copy.navVideos}</button>
         <button class="${navPage === 'build' ? 'chip chip--active' : 'chip'}" data-nav="/build/${state.route.id || 1}">${copy.navBuild}</button>
+        <button class="${navPage === 'count' ? 'chip chip--active' : 'chip'}" data-nav="/count/${state.route.id || 1}">${copy.navCount}</button>
         <button class="${navPage === 'quiz' ? 'chip chip--active' : 'chip'}" data-nav="/quiz">${copy.navQuiz}</button>
         <button class="${navPage === 'about' ? 'chip chip--active' : 'chip'}" data-nav="/about">${copy.navAbout}</button>
       </nav>
@@ -1000,8 +1134,10 @@ function renderLearn() {
               ${renderHotspots(card)}
             </div>
           </section>
+        </div>
 
-          <section class="panel mnemonic-card mnemonic-card--compact">
+        <aside class="panel learn-side">
+          <section class="mnemonic-card mnemonic-card--compact mnemonic-card--side">
             <h3>${content.mnemonic}</h3>
             <div class="hero__actions hero__actions--compact">
               <button class="primary-btn" data-action="play-mnemonic" data-card-value="${card.value}">${state.playingType === 'mnemonic' ? copy.stopMnemonic : copy.playMnemonic}</button>
@@ -1009,9 +1145,7 @@ function renderLearn() {
               <button class="soft-btn" data-action="play-en" data-card-value="${card.value}">${state.playingType === 'en' ? copy.stopEnglishAudio : copy.playEnglishAudio}</button>
             </div>
           </section>
-        </div>
 
-        <aside class="panel learn-side">
           <div class="learn-side__meta">
             <span>${copy.currentNumber}</span>
             <strong>${card.value}</strong>
@@ -1024,7 +1158,76 @@ function renderLearn() {
           </div>
 
           <div class="learn-side__actions">
+            <button class="soft-btn learn-side__stack-btn" data-nav="/count/${card.value}">${copy.countCarsAction}</button>
             <button class="accent-btn learn-side__build-btn" data-nav="/build/${card.value}">${copy.buildNumber(card.value)}</button>
+          </div>
+        </aside>
+      </section>
+    </main>
+  `
+}
+
+function renderCount() {
+  const copy = getCopy()
+  const card = getCardByValue(state.route.id || 1)
+  const content = getCardContent(card)
+  const session = getCountSession(card.value)
+  const foundCount = session.countedCars
+  const totalCount = card.value
+  const currentIndex = numberCards.findIndex((item) => item.value === card.value)
+  const previousCard = numberCards[currentIndex - 1]
+  const nextCard = numberCards[currentIndex + 1]
+
+  return `
+    <main class="page-shell">
+      <section class="learn-banner panel">
+        <span class="learn-banner__badge">${copy.countBadge}</span>
+        <h1>${copy.countTitle(content.label)}</h1>
+      </section>
+
+      <section class="count-layout">
+        <section class="panel count-board">
+          <div class="web-image-wrap count-image-wrap">
+            <button class="count-image-button" data-action="count-image" data-card-value="${card.value}" title="${copy.countCarsAction}" aria-label="${copy.countCarsAction}">
+              <img src="${card.countImage || card.image}" alt="${content.label}" />
+            </button>
+          </div>
+        </section>
+
+        <aside class="panel count-side">
+          <div class="count-side__pager">
+            <button class="soft-btn soft-btn--icon" ${previousCard ? `data-nav="/count/${previousCard.value}"` : 'disabled'} aria-label="${copy.previous}" title="${copy.previous}">←</button>
+            <button class="soft-btn soft-btn--icon" data-action="reset-count" data-card-value="${card.value}" aria-label="${copy.countReset}" title="${copy.countReset}">&#8635;</button>
+            <button class="soft-btn soft-btn--icon" ${nextCard ? `data-nav="/count/${nextCard.value}"` : 'disabled'} aria-label="${copy.next}" title="${copy.next}">→</button>
+          </div>
+
+          <div class="count-progress ${foundCount === totalCount ? 'count-progress--done' : ''}">
+            ${foundCount === totalCount ? copy.countDone(totalCount) : copy.countProgress(foundCount, totalCount)}
+          </div>
+          <p class="count-hint">${copy.countHint}</p>
+
+          <div class="count-options">
+            ${session.options
+              .map((option) => {
+                let stateClass = ''
+                if (session.answerCorrect && option === totalCount) {
+                  stateClass = ' count-option--correct'
+                } else if (session.wrongAnswers.includes(option)) {
+                  stateClass = ' count-option--wrong'
+                }
+                return `
+                  <button class="panel count-option${stateClass}" data-action="count-answer" data-card-value="${card.value}" data-value="${option}">${option}</button>
+                `
+              })
+              .join('')}
+          </div>
+
+          <div class="count-actions">
+            <button class="soft-btn" data-nav="/learn/${card.value}">${copy.backToLearn}</button>
+          </div>
+
+          <div class="builder-success ${foundCount === totalCount ? '' : 'builder-success--idle'}">
+            ${session.answerText || copy.countPrompt}
           </div>
         </aside>
       </section>
@@ -1341,6 +1544,8 @@ function renderPage() {
       return renderLearn()
     case 'videos':
       return renderVideos()
+    case 'count':
+      return renderCount()
     case 'build':
       return renderBuild()
     case 'quiz':
@@ -1456,6 +1661,15 @@ app.addEventListener('click', (event) => {
     }
     case 'use-hint':
       useHint()
+      break
+    case 'count-image':
+      countCar(Number(target.dataset.cardValue))
+      break
+    case 'count-answer':
+      chooseCountAnswer(Number(target.dataset.cardValue), Number(target.dataset.value))
+      break
+    case 'reset-count':
+      resetCountSession(Number(target.dataset.cardValue))
       break
     case 'quiz-option':
       chooseOption(Number(target.dataset.value))

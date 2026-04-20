@@ -151,6 +151,7 @@ export const numberCards = [
   { value: 10, label: '数字 10', image: withBase('/assets/images/numbers/IMG_18740.jpg'), tip: '最后认识数字 10，完成一轮练习。', audioTextZh: '10', audioTextEn: 'ten', mnemonic: '10 是一和零手拉手', mnemonicAudioZh: withBase('/assets/audio/mnemonic-custom/10.mp3'), audioZh: withBase('/assets/audio/zh-custom/10.mp3'), audioEn: withBase('/assets/audio/en/10.wav') }
 ].map((card) => ({
   ...card,
+  countImage: withBase(`/assets/images/count-cars/${card.value}.jpg`),
   hornAudio: effectAudio.horn,
   hotspots: hotspotMap[card.value] || []
 }))

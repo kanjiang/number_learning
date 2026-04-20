@@ -54,6 +54,8 @@ img {
 .topbar__nav {
     display: flex;
     gap: 8px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
 }
 
 .topbar__nav button,
@@ -251,7 +253,7 @@ img {
     display: grid;
     gap: 16px;
     margin-top: 18px;
-    grid-template-columns: minmax(0, 1.75fr) minmax(250px, 0.82fr);
+    grid-template-columns: minmax(0, 1.55fr) minmax(300px, 0.95fr);
 }
 
 .learn-side {
@@ -462,6 +464,15 @@ img {
     padding: 16px 18px;
 }
 
+.mnemonic-card--side {
+    margin-top: 0;
+    border-radius: 16px;
+}
+
+.mnemonic-card--side .hero__actions {
+    margin-top: 12px;
+}
+
 .mnemonic-card h3,
 .builder-side h3 {
     margin: 0;
@@ -497,6 +508,105 @@ img {
 }
 
 .video-card .soft-btn {
+    margin-top: 14px;
+}
+
+.count-layout {
+    display: grid;
+    gap: 16px;
+    margin-top: 18px;
+    grid-template-columns: minmax(0, 1.7fr) minmax(240px, 0.88fr);
+}
+
+.count-board,
+.count-side {
+    padding: 18px 20px;
+}
+
+.count-image-wrap {
+    border-radius: 20px;
+}
+
+.count-image-button {
+    display: block;
+    width: 100%;
+    padding: 0;
+    background: transparent;
+}
+
+.count-image-button img {
+    width: 100%;
+    border-radius: 20px;
+}
+
+.hotspot--count::before {
+    width: 18px;
+    height: 18px;
+    background: rgba(84, 158, 255, 0.96);
+    box-shadow: 0 8px 18px rgba(84, 158, 255, 0.22);
+}
+
+.hotspot--counted::before {
+    background: rgba(102, 200, 129, 0.96);
+    box-shadow: 0 8px 18px rgba(102, 200, 129, 0.24);
+    transform: scale(1.1);
+}
+
+.count-progress {
+    padding: 12px 14px;
+    border-radius: 16px;
+    background: rgba(255, 247, 222, 0.92);
+    color: #8a5a11;
+    font-weight: 700;
+}
+
+.count-side__pager {
+    display: grid;
+    gap: 10px;
+    margin-bottom: 14px;
+    grid-template-columns: 52px minmax(0, 1fr) 52px;
+}
+
+.count-progress--done {
+    background: linear-gradient(135deg, #d8f6d7 0%, #b8e9af 100%);
+    color: #356133;
+}
+
+.count-hint {
+    margin: 12px 0 0;
+    color: #7a5d3b;
+    line-height: 1.6;
+}
+
+.count-options {
+    display: grid;
+    gap: 10px;
+    margin-top: 14px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.count-option {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 72px;
+    padding: 0;
+    font-size: 28px;
+    font-weight: 800;
+    color: #6b3d00;
+}
+
+.count-option--correct {
+    background: linear-gradient(135deg, #d8f6d7 0%, #b8e9af 100%);
+}
+
+.count-option--wrong {
+    background: linear-gradient(135deg, #ffe0d8 0%, #ffb8a9 100%);
+}
+
+.count-actions {
+    display: grid;
+    gap: 8px;
     margin-top: 14px;
 }
 
@@ -909,6 +1019,10 @@ img {
         grid-template-columns: 1fr;
     }
 
+    .count-layout {
+        grid-template-columns: 1fr;
+    }
+
     .builder-layout {
         grid-template-columns: 1fr;
     }
@@ -953,6 +1067,10 @@ img {
 
     .learn-side__pager {
         grid-template-columns: 48px minmax(0, 1fr) 48px;
+    }
+
+    .count-side__pager {
+        grid-template-columns: 44px minmax(0, 1fr) 44px;
     }
 
     .builder-selector__chip {
