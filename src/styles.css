@@ -522,10 +522,26 @@ img {
 }
 
 .builder-cell {
+    position: relative;
+    overflow: hidden;
     aspect-ratio: 1 / 1;
     border-radius: 16px;
     background: rgba(255, 244, 220, 0.9);
     border: 2px solid rgba(214, 123, 0, 0.12);
+}
+
+.builder-cell::before {
+    content: '';
+    position: absolute;
+    inset: 14%;
+    background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2072%2048'%3E%3Cpath%20fill='%23fff7e8'%20d='M17%2014h24l8%2010h8c3%200%205%202%205%205v7H10v-7c0-3%202-5%205-5h2z'/%3E%3Cpath%20fill='%23ff9f2e'%20d='M21%2016h18l6%208H15z'/%3E%3Ccircle%20cx='22'%20cy='37'%20r='6'%20fill='%234d2a00'/%3E%3Ccircle%20cx='50'%20cy='37'%20r='6'%20fill='%234d2a00'/%3E%3Ccircle%20cx='22'%20cy='37'%20r='3'%20fill='%23fff'/%3E%3Ccircle%20cx='50'%20cy='37'%20r='3'%20fill='%23fff'/%3E%3Crect%20x='27'%20y='19'%20width='8'%20height='5'%20rx='1.5'%20fill='%238cd2ff'/%3E%3Crect%20x='37'%20y='19'%20width='6'%20height='5'%20rx='1.5'%20fill='%238cd2ff'/%3E%3Crect%20x='53'%20y='26'%20width='5'%20height='3'%20rx='1'%20fill='%23ffe4b8'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    opacity: 0.28;
+    transform: scale(0.96);
+    transition: transform 0.18s ease, opacity 0.18s ease, filter 0.18s ease;
+    pointer-events: none;
 }
 
 .builder-cell--target {
@@ -533,9 +549,18 @@ img {
     border-color: rgba(244, 166, 33, 0.35);
 }
 
+.builder-cell--target::before {
+    opacity: 0.36;
+    filter: saturate(0.92);
+}
+
 .builder-cell--void {
     background: rgba(255, 255, 255, 0.24);
     border-style: dashed;
+}
+
+.builder-cell--void::before {
+    display: none;
 }
 
 .builder-cell--void:disabled {
@@ -552,6 +577,18 @@ img {
 
 .builder-cell--mint {
     background: #7ad7ad;
+}
+
+.builder-cell--sun::before,
+.builder-cell--sky::before,
+.builder-cell--mint::before {
+    opacity: 0.96;
+    filter: drop-shadow(0 4px 8px rgba(76, 42, 0, 0.16));
+}
+
+.builder-cell:hover::before,
+.builder-cell:focus-visible::before {
+    transform: scale(1.04);
 }
 
 .builder-success {

@@ -4,10 +4,12 @@ import { appMeta, blockPatterns, effectAudio, learningVideos, numberCards, relea
 const app = document.querySelector('#app')
 const speechAudio = new Audio()
 const fxAudio = new Audio()
+const fxOverlayAudio = new Audio()
 let pendingAutoSpeechTimer = null
 
 speechAudio.preload = 'auto'
 fxAudio.preload = 'auto'
+fxOverlayAudio.preload = 'auto'
 
 const storageKeys = {
   language: 'numberWebLanguage',
@@ -128,9 +130,9 @@ const messages = {
     copyHotspots: '复制当前热点 JSON',
     resetHotspots: '重置当前卡片热点',
     editTip: '拖动图片上的热点即可调整位置，松手后会自动保存在当前浏览器。',
-    hotspotSpeech: '数字口诀',
+    hotspotSpeech: '数字发音',
     hotspotHorn: '汽车鸣笛',
-    hotspotHint: '橙色热点会播放数字口诀，蓝色小汽车热点会播放鸣笛声音。',
+    hotspotHint: '橙色热点会播放当前数字发音，蓝色小汽车热点会播放鸣笛声音。',
     mnemonicBadge: '数字口诀',
     mnemonicHint: '点击图片里的数字也会直接播放这句口诀。',
     playMnemonic: '播放数字口诀',
@@ -164,10 +166,11 @@ const messages = {
     goQuizAction: '去做闯关题',
     buildBadge: '积木拼数字',
     buildTitle: (label) => `用积木拼出 ${label}`,
-    buildDesc: '先选择颜色，再点亮数字轮廓里的格子，把数字拼出来。',
+    buildDesc: '先选择颜色，再点亮带小车图案的格子，把数字拼出来。每点一下都会鸣笛，拼好后还会鼓掌。',
     resetBuild: '重新拼一遍',
     playCurrentMnemonic: '播放当前数字口诀',
     backToLearn: '返回学习页',
+    builderCellHint: '点击小车积木，播放汽车鸣笛',
     currentTarget: '当前目标',
     number: '数字',
     cells: '格子数',
@@ -265,9 +268,9 @@ const messages = {
     copyHotspots: 'Copy Hotspot JSON',
     resetHotspots: 'Reset Current Hotspots',
     editTip: 'Drag hotspots on the image to adjust their positions. Changes are saved in this browser when you release the pointer.',
-    hotspotSpeech: 'Mnemonic',
+    hotspotSpeech: 'Number Audio',
     hotspotHorn: 'Horn',
-    hotspotHint: 'Orange hotspots play the number mnemonic. Blue car hotspots play the horn sound.',
+    hotspotHint: 'Orange hotspots play the current number audio. Blue car hotspots play the horn sound.',
     mnemonicBadge: 'Number Mnemonic',
     mnemonicHint: 'Tapping the number inside the picture will also play this mnemonic.',
     playMnemonic: 'Play Mnemonic',
@@ -301,10 +304,11 @@ const messages = {
     goQuizAction: 'Go To Quiz',
     buildBadge: 'Block Builder',
     buildTitle: (label) => `Build ${label} with blocks`,
-    buildDesc: 'Choose a color, then tap the highlighted cells to build the number.',
+    buildDesc: 'Choose a color, then tap the car tiles to build the number. Every tap honks, and finishing the puzzle adds applause.',
     resetBuild: 'Start Over',
     playCurrentMnemonic: 'Play Current Mnemonic',
     backToLearn: 'Back To Learn',
+    builderCellHint: 'Tap the car tile to play the horn',
     currentTarget: 'Current Target',
     number: 'Number',
     cells: 'Cells',
@@ -396,14 +400,15 @@ function getPaletteLabel(palette) {
   return state.selectedLanguage === 'en' ? palette.labelEn : palette.labelZh
 }
 
-function playEffect(src) {
+function playEffect(src, useOverlay = false) {
   if (!src) {
     return
   }
-  fxAudio.pause()
-  fxAudio.currentTime = 0
-  fxAudio.src = src
-  fxAudio.play().catch(() => {})
+  const player = useOverlay ? fxOverlayAudio : fxAudio
+  player.pause()
+  player.currentTime = 0
+  player.src = src
+  player.play().catch(() => {})
 }
 
 function playAudioSource(src, type, errorTitle, showErrorModal = true) {
@@ -463,8 +468,8 @@ function playSelectedValueAudio(value) {
   }, 180)
 }
 
-function playHorn() {
-  playEffect(effectAudio.horn)
+function playHorn(card) {
+  playEffect(card?.hornAudio || effectAudio.horn)
 }
 
 function getCardByValue(value) {
@@ -503,12 +508,18 @@ function toggleBuilderCell(value, rowIndex, columnIndex) {
   if (!isPatternCellActive(pattern, rowIndex, columnIndex)) {
     return
   }
+  const wasComplete = isBuilderComplete(value)
   const session = getBuilderSession(value)
   const key = getBuilderCellKey(rowIndex, columnIndex)
   if (session.filledCells[key]) {
     delete session.filledCells[key]
   } else {
     session.filledCells[key] = session.selectedColor
+  }
+  const card = getCardByValue(value)
+  playHorn(card)
+  if (!wasComplete && isBuilderComplete(value)) {
+    playEffect(effectAudio.applause, true)
   }
   render()
 }
@@ -1083,7 +1094,7 @@ function renderBuild() {
                     }
                     const colorClass = filledColor ? ` builder-cell--${filledColor}` : ' builder-cell--target'
                     return `
-                      <button class="builder-cell${colorClass}" data-action="builder-cell" data-card-value="${card.value}" data-row="${rowIndex}" data-column="${columnIndex}"></button>
+                      <button class="builder-cell${colorClass}" data-action="builder-cell" data-card-value="${card.value}" data-row="${rowIndex}" data-column="${columnIndex}" title="${copy.builderCellHint}" aria-label="${copy.builderCellHint}"></button>
                     `
                   })
                   .join('')
@@ -1380,7 +1391,7 @@ app.addEventListener('click', (event) => {
     if (target.dataset.hotspotType === 'horn') {
       playHorn(card)
     } else {
-      playMnemonic(card)
+      playSpeech(card, state.selectedLanguage)
     }
     return
   }

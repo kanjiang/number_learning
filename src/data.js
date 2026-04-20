@@ -91,6 +91,7 @@ export const releaseChecklist = [
 
 export const effectAudio = {
   horn: withBase('/assets/audio/effects/car-horn.wav'),
+  applause: withBase('/assets/audio/effects/applause.wav'),
   correct: withBase('/assets/audio/effects/correct.wav'),
   wrong: withBase('/assets/audio/effects/wrong.wav'),
   complete: withBase('/assets/audio/effects/complete.wav'),
